@@ -2,9 +2,9 @@ import { geoSearchService } from '../src/services/geo-search.service';
 
 describe('GeoSearch Service Unit Tests (PR #2)', () => {
   test('Calculates distance in kilometers correctly', () => {
-    // Distance between NY and Philadelphia (~150 km)
+    // Distance between NY and Philadelphia (~130 km)
     const dist = geoSearchService.calculateDistanceKm(40.7128, -74.006, 39.9526, -75.1652);
-    expect(dist).toBeGreaterThan(130);
+    expect(dist).toBeGreaterThan(120);
     expect(dist).toBeLessThan(170);
   });
 
