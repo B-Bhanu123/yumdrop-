@@ -10,7 +10,7 @@ export const createApp = () => {
   app.use(cors());
   app.use(express.json());
 
-  app.get('/health', (req: Request, res: Response) => {
+  app.get('/health', (_req: Request, res: Response) => {
     res.status(200).json({ status: 'UP', service: 'Payment & Billing Service' });
   });
 
@@ -18,12 +18,13 @@ export const createApp = () => {
   app.post('/api/v1/payments/:id/refund', (req, res, next) => controller.refundPayment(req, res, next));
   app.get('/api/v1/payments/:id', (req, res, next) => controller.getTransaction(req, res, next));
 
-  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction): void => {
     if (err instanceof CustomError) {
-      return res.status(err.statusCode).json({
+      res.status(err.statusCode).json({
         success: false,
         errors: err.serializeErrors()
       });
+      return;
     }
 
     res.status(500).json({

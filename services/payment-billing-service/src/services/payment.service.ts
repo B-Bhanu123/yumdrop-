@@ -59,7 +59,7 @@ export class PaymentService {
     return { transaction, invoice };
   }
 
-  async refundPayment(transactionId: string, reason?: string): Promise<PaymentTransactionEntity> {
+  async refundPayment(transactionId: string, _reason?: string): Promise<PaymentTransactionEntity> {
     const tx = await paymentRepository.findById(transactionId);
     if (!tx) {
       throw new NotFoundError('Transaction');

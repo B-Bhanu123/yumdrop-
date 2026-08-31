@@ -10,19 +10,20 @@ export const createApp = () => {
   app.use(cors());
   app.use(express.json());
 
-  app.get('/health', (req: Request, res: Response) => {
+  app.get('/health', (_req: Request, res: Response) => {
     res.status(200).json({ status: 'UP', service: 'Kitchen Analytics & AI Service' });
   });
 
   app.post('/api/v1/analytics/metrics', (req, res, next) => controller.recordMetric(req, res, next));
   app.get('/api/v1/analytics/summary', (req, res, next) => controller.getExecutiveSummary(req, res, next));
 
-  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction): void => {
     if (err instanceof CustomError) {
-      return res.status(err.statusCode).json({
+      res.status(err.statusCode).json({
         success: false,
         errors: err.serializeErrors()
       });
+      return;
     }
 
     res.status(500).json({

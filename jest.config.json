@@ -1,0 +1,12 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "roots": ["<rootDir>/packages", "<rootDir>/services"],
+  "testMatch": ["**/*.test.ts"],
+  "transform": {
+    "^.+\\.tsx?$": ["ts-jest", { "tsconfig": "tsconfig.json" }]
+  },
+  "moduleNameMapper": {
+    "^@yumdrop/shared-core$": "<rootDir>/packages/shared-core/src"
+  }
+}

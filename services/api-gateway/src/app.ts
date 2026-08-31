@@ -1,9 +1,8 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { gatewayConfig } from './config/gateway-config';
 import { authenticateJwt } from './middleware/auth-middleware';
-import { globalErrorHandler } from './middleware/error-handler';
 
 export const createApp = () => {
   const app = express();
@@ -12,8 +11,7 @@ export const createApp = () => {
   app.use(express.json());
   app.use(morgan('dev'));
 
-  // Gateway Health & Metadata Endpoints
-  app.get('/health', (req: Request, res: Response) => {
+  app.get('/health', (_req: Request, res: Response) => {
     res.status(200).json({
       status: 'UP',
       service: 'YumDrop API Gateway',
@@ -22,7 +20,7 @@ export const createApp = () => {
     });
   });
 
-  app.get('/api/v1/routes', (req: Request, res: Response) => {
+  app.get('/api/v1/routes', (_req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       routes: [
@@ -37,7 +35,6 @@ export const createApp = () => {
     });
   });
 
-  // Protected Gateway Verification Endpoint
   app.get('/api/v1/verify-token', authenticateJwt, (req: any, res: Response) => {
     res.status(200).json({
       success: true,
@@ -46,7 +43,16 @@ export const createApp = () => {
     });
   });
 
-  app.use(globalErrorHandler);
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction): void => {
+    console.error('[API Gateway Error]:', err);
+    const statusCode = err.statusCode || err.status || 500;
+    const message = err.message || 'Internal Gateway Error';
+    res.status(statusCode).json({
+      success: false,
+      errors: [{ message, errorCode: err.errorCode || 'GATEWAY_ERROR' }],
+      timestamp: new Date().toISOString()
+    });
+  });
 
   return app;
 };

@@ -1,0 +1,37 @@
+name: YumDrop Microservices CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Monorepo Dependencies
+        run: npm ci
+
+      - name: Build All Shared Core & Microservices
+        run: npm run build
+
+      - name: Execute All Unit Test Suites Across Microservices
+        run: npm test
+
+      - name: Verify 50k+ LOC Codebase Requirement
+        run: node scripts/verify-loc-count.js

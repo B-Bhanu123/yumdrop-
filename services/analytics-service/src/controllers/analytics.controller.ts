@@ -15,7 +15,7 @@ export class AnalyticsController {
     }
   }
 
-  async getExecutiveSummary(req: Request, res: Response, next: NextFunction) {
+  async getExecutiveSummary(_req: Request, res: Response, next: NextFunction) {
     try {
       const summary = await analyticsService.getExecutiveSummary();
       res.status(200).json({

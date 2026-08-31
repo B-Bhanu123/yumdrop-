@@ -10,13 +10,14 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-export const authenticateJwt = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authenticateJwt = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       errors: [{ message: 'Authentication required. Missing Bearer token.', errorCode: 'UNAUTHORIZED' }]
     });
+    return;
   }
 
   const token = authHeader.split(' ')[1];
@@ -31,20 +32,22 @@ export const authenticateJwt = (req: AuthenticatedRequest, res: Response, next: 
     req.headers['x-user-role'] = req.user.role;
     next();
   } catch (error) {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       errors: [{ message: 'Invalid or expired access token.', errorCode: 'INVALID_TOKEN' }]
     });
+    return;
   }
 };
 
 export const authorizeRoles = (...roles: string[]) => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     if (!req.user || !roles.includes(req.user.role)) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         errors: [{ message: `Access forbidden for role ${req.user?.role || 'anonymous'}`, errorCode: 'FORBIDDEN' }]
       });
+      return;
     }
     next();
   };
