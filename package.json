@@ -14,6 +14,7 @@
     "test:e2e": "jest --config jest.config.json --selectProjects e2e",
     "lint": "eslint . --ext .ts,.js",
     "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+    "start:all": "node scripts/start-all-services.js",
     "verify:loc": "node scripts/verify-loc-count.js",
     "docker:up": "docker-compose -f deploy/docker-compose.yml up -d --build",
     "docker:down": "docker-compose -f deploy/docker-compose.yml down",
